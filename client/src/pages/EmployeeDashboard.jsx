@@ -141,9 +141,11 @@ const calcScore = (goal, actual) => {
 
         {/* Add Goal Form */}
         {showForm && (
-          background: "white", borderRadius: "14px", padding: "1.25rem 1.5rem", boxShadow: "0 4px 16px rgba(30,58,95,0.08)", border: "1px solid rgba(30,58,95,0.06)"
-            <h3 style={{ marginBottom: "1rem", fontSize: "16px", fontWeight: "600" }}>New Goal</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+  <div style={{
+    background: "white", borderRadius: "14px", padding: "1.25rem 1.5rem", boxShadow: "0 4px 16px rgba(30,58,95,0.08)", border: "1px solid rgba(30,58,95,0.06)"
+  }}>
+    <h3 style={{ marginBottom: "1rem", fontSize: "16px", fontWeight: "600" }}>New Goal</h3>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
               <div>
                 <label style={{ fontSize: "12px", color: "#6b7280" }}>Thrust Area</label>
                 <select value={form.thrust_area} onChange={e => setForm({ ...form, thrust_area: e.target.value })}
