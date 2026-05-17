@@ -199,83 +199,84 @@ const calcScore = (goal, actual) => {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {goals.map(goal => (
-              <div key={goal.id} style={{ background: "white", borderRadius: "12px", padding: "1.25rem 1.5rem", boxShadow: "0 1px 4px rgba(0,0,0,0.05)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
-                    <span style={{ fontWeight: "600", fontSize: "15px" }}>{goal.title}</span>
-                    <span style={{ fontSize: "11px", padding: "2px 10px", borderRadius: "20px", background: statusColor(goal.status) + "20", color: statusColor(goal.status), fontWeight: "500" }}>{goal.status}</span>
-                  </div>
-                  <div style={{ fontSize: "13px", color: "#6b7280" }}>
-                    {goal.thrust_area} · Target: {goal.target} · Weightage: {goal.weightage}% · UoM: {goal.uom_type}
-                  </div>
-                </div>
-                {goal.status === "draft" && (
-                  <button onClick={() => handleDelete(goal.id)} style={{ background: "#fef2f2", color: "#dc2626", border: "none", borderRadius: "8px", padding: "6px 14px", cursor: "pointer", fontSize: "13px" }}>Delete</button>
-                )}
-                {goal.status === "approved" && (
-  <div style={{ marginTop: "1rem", borderTop: "1px solid #f3f4f6", paddingTop: "1rem" }}>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-      <span style={{ fontSize: "13px", fontWeight: "500", color: "#374151" }}>Quarterly Progress</span>
-      <button onClick={() => { setShowQuarterly(goal.id); fetchQuarterly(goal.id); }}
-        style={{ fontSize: "12px", padding: "4px 12px", background: "#eff6ff", color: "#2563eb", border: "none", borderRadius: "6px", cursor: "pointer" }}>
-        + Log Progress
-      </button>
+  <div key={goal.id} style={{
+    background: "white", borderRadius: "14px", padding: "1.25rem 1.5rem",
+    boxShadow: "0 4px 16px rgba(30,58,95,0.08)", border: "1px solid rgba(30,58,95,0.06)",
+    marginBottom: "12px"
+  }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div style={{ flex: 1 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+          <span style={{ fontWeight: "600", fontSize: "15px" }}>{goal.title}</span>
+          <span style={{ fontSize: "11px", padding: "2px 10px", borderRadius: "20px", background: statusColor(goal.status) + "20", color: statusColor(goal.status), fontWeight: "500" }}>{goal.status}</span>
+        </div>
+        <div style={{ fontSize: "13px", color: "#6b7280" }}>
+          {goal.thrust_area} · Target: {goal.target} · Weightage: {goal.weightage}% · UoM: {goal.uom_type}
+        </div>
+      </div>
+      {(goal.status === "draft" || goal.status === "returned") && (
+        <button onClick={() => handleDelete(goal.id)} style={{ background: "#fef2f2", color: "#dc2626", border: "none", borderRadius: "8px", padding: "6px 14px", cursor: "pointer", fontSize: "13px" }}>Delete</button>
+      )}
     </div>
 
-    {(quarterlyData[goal.id] || []).map(q => (
-      <div key={q.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6b7280", padding: "4px 0" }}>
-        <span>{q.quarter}</span>
-        <span>Actual: {q.actual_achievement}</span>
-        <span>Score: {calcScore(goal, q.actual_achievement)}</span>
-        <span style={{ color: q.status === "completed" ? "#10b981" : q.status === "on_track" ? "#3b82f6" : "#6b7280" }}>{q.status}</span>
-      </div>
-    ))}
+    {goal.status === "approved" && (
+      <div style={{ marginTop: "1rem", borderTop: "1px solid #f3f4f6", paddingTop: "1rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+          <span style={{ fontSize: "13px", fontWeight: "500", color: "#374151" }}>Quarterly Progress</span>
+          <button onClick={() => { setShowQuarterly(goal.id); fetchQuarterly(goal.id); }}
+            style={{ fontSize: "12px", padding: "4px 12px", background: "#eff6ff", color: "#2563eb", border: "none", borderRadius: "6px", cursor: "pointer" }}>
+            + Log Progress
+          </button>
+        </div>
 
-    {showQuarterly === goal.id && (
-      <div style={{ marginTop: "10px", background: "#f9fafb", borderRadius: "8px", padding: "12px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "8px" }}>
-          <div>
-            <label style={{ fontSize: "11px", color: "#6b7280" }}>Quarter</label>
-            <select value={qForm.quarter} onChange={e => setQForm({ ...qForm, quarter: e.target.value })}
-              style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px" }}>
-              {["Q1","Q2","Q3","Q4"].map(q => <option key={q}>{q}</option>)}
-            </select>
+        {(quarterlyData[goal.id] || []).map(q => (
+          <div key={q.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6b7280", padding: "4px 0" }}>
+            <span>{q.quarter}</span>
+            <span>Actual: {q.actual_achievement}</span>
+            <span>Score: {calcScore(goal, q.actual_achievement)}</span>
+            <span style={{ color: q.status === "completed" ? "#10b981" : q.status === "on_track" ? "#3b82f6" : "#6b7280" }}>{q.status}</span>
           </div>
-          <div>
-            <label style={{ fontSize: "11px", color: "#6b7280" }}>Actual Achievement</label>
-            <input type="number" value={qForm.actual_achievement}
-              onChange={e => setQForm({ ...qForm, actual_achievement: e.target.value })}
-              style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px", boxSizing: "border-box" }} />
-          </div>
-          <div>
-            <label style={{ fontSize: "11px", color: "#6b7280" }}>Status</label>
-            <select value={qForm.status} onChange={e => setQForm({ ...qForm, status: e.target.value })}
-              style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px" }}>
-              <option value="not_started">Not Started</option>
-              <option value="on_track">On Track</option>
-              <option value="completed">Completed</option>
-            </select>
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: "8px" }}>
-          <button onClick={() => handleQuarterlySubmit(goal.id)}
-            style={{ padding: "6px 16px", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "13px" }}>
-            Save
-          </button>
-          <button onClick={() => setShowQuarterly(null)}
-            style={{ padding: "6px 16px", background: "#f3f4f6", color: "#374151", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "13px" }}>
-            Cancel
-          </button>
-        </div>
-      </div>
-    )}
-  </div>
-)}
+        ))}
+
+        {showQuarterly === goal.id && (
+          <div style={{ marginTop: "10px", background: "#f9fafb", borderRadius: "8px", padding: "12px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "8px" }}>
+              <div>
+                <label style={{ fontSize: "11px", color: "#6b7280" }}>Quarter</label>
+                <select value={qForm.quarter} onChange={e => setQForm({ ...qForm, quarter: e.target.value })}
+                  style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px" }}>
+                  {["Q1","Q2","Q3","Q4"].map(q => <option key={q}>{q}</option>)}
+                </select>
               </div>
-            ))}
+              <div>
+                <label style={{ fontSize: "11px", color: "#6b7280" }}>Actual Achievement</label>
+                <input type="number" value={qForm.actual_achievement}
+                  onChange={e => setQForm({ ...qForm, actual_achievement: e.target.value })}
+                  style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px", boxSizing: "border-box" }} />
+              </div>
+              <div>
+                <label style={{ fontSize: "11px", color: "#6b7280" }}>Status</label>
+                <select value={qForm.status} onChange={e => setQForm({ ...qForm, status: e.target.value })}
+                  style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px" }}>
+                  <option value="not_started">Not Started</option>
+                  <option value="on_track">On Track</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button onClick={() => handleQuarterlySubmit(goal.id)}
+                style={{ padding: "6px 16px", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "13px" }}>
+                Save
+              </button>
+              <button onClick={() => setShowQuarterly(null)}
+                style={{ padding: "6px 16px", background: "#f3f4f6", color: "#374151", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "13px" }}>
+                Cancel
+              </button>
+            </div>
           </div>
         )}
       </div>
-    </div>
-  );
-}
+    )}
+  </div>
+))}
