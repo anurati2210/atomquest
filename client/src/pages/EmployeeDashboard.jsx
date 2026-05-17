@@ -54,9 +54,9 @@ const calcScore = (goal, actual) => {
 
   useEffect(() => { fetchGoals(); }, []);
 
-  const totalWeightage = goals.reduce((sum, g) => sum + g.weightage, 0);
+  const totalWeightage = goals.filter(g => g.status === "draft" || g.status === "returned").reduce((sum, g) => sum + g.weightage, 0);
   const draftGoals = goals.filter(g => g.status === "draft");
-  const canSubmit = draftGoals.length > 0 && Math.abs(totalWeightage - 100) < 0.01;
+  const canSubmit = draftGoals.length > 0 && Math.abs(totalWeightage - 100) < 0.01 && draftGoals.every(g => g.weightage >= 10);
 
   const handleAdd = async () => {
     setError("");
