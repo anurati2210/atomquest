@@ -2,10 +2,10 @@
 
 A full-stack Goal Setting & Tracking Portal built for the AtomQuest Hackathon 1.0.
 
-## Live Demo
+## 🌐 Live Demo
 **https://atomquest-five.vercel.app**
 
-## Demo Credentials
+## 🔑 Demo Credentials
 
 | Role | Email | Password |
 |------|-------|----------|
@@ -13,7 +13,7 @@ A full-stack Goal Setting & Tracking Portal built for the AtomQuest Hackathon 1.
 | Manager | manager@demo.com | password123 |
 | Admin | admin@demo.com | password123 |
 
-## Features
+## 🎯 Features
 
 ### Employee
 - Create up to 8 goals with thrust area, target, UoM type and weightage
@@ -33,7 +33,7 @@ A full-stack Goal Setting & Tracking Portal built for the AtomQuest Hackathon 1.
 - Unlock approved goals for editing
 - Export all goal data as CSV
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -41,26 +41,13 @@ A full-stack Goal Setting & Tracking Portal built for the AtomQuest Hackathon 1.
 | Backend | Python + FastAPI |
 | Database | SQLite + SQLAlchemy |
 | Auth | JWT (python-jose) |
-| Deployment | Vercel (frontend) + Render (backend) |
+| Frontend Deploy | Vercel |
+| Backend Deploy | Render |
 
-## Architecture
+## 🏗️ Architecture
 Browser → Vercel (React) → Render (FastAPI) → SQLite DB
 
-## Project Structure
-atomquest/
-├── client/          # React frontend
-│   └── src/
-│       ├── pages/   # Login, Employee, Manager, Admin dashboards
-│       └── context/ # Auth context
-└── server/          # FastAPI backend
-├── main.py      # All API routes
-└── app/
-├── models.py    # Database models
-├── schemas.py   # Request/response schemas
-├── auth.py      # JWT authentication
-└── database.py  # DB connection
-
-## Run Locally
+## 🚀 Run Locally
 
 ### Backend
 ```bash
@@ -75,11 +62,3 @@ cd client
 npm install
 npm run dev
 ```
-
-## Progress Score Formula
-
-| UoM Type | Formula |
-|----------|---------|
-| Max (higher is better) | actual / target × 100 |
-| Min (lower is better) | target / actual × 100 |
-| Zero | 100% if actual = 0, else 0% |
