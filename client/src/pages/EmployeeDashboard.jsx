@@ -117,7 +117,7 @@ const calcScore = (goal, actual) => {
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <div>
-            <h2 style={{ fontSize: "22px", fontWeight: "600" }}>My Goals</h2>
+            <h2 style={{ fontSize: "22px", fontWeight: "700", color: "#1e3a5f" }}>My Goals</h2>
             <p style={{ color: "#6b7280", fontSize: "14px" }}>Total weightage: <strong style={{ color: Math.abs(totalWeightage - 100) < 0.01 ? "#10b981" : "#f59e0b" }}>{totalWeightage}%</strong> / 100%</p>
           </div>
           <div style={{ display: "flex", gap: "10px" }}>
@@ -141,7 +141,7 @@ const calcScore = (goal, actual) => {
 
         {/* Add Goal Form */}
         {showForm && (
-          <div style={{ background: "white", borderRadius: "12px", padding: "1.5rem", marginBottom: "1.5rem", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+          background: "white", borderRadius: "14px", padding: "1.25rem 1.5rem", boxShadow: "0 4px 16px rgba(30,58,95,0.08)", border: "1px solid rgba(30,58,95,0.06)"
             <h3 style={{ marginBottom: "1rem", fontSize: "16px", fontWeight: "600" }}>New Goal</h3>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
               <div>
