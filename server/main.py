@@ -70,7 +70,10 @@ def create_goal(goal: schemas.GoalCreate, db: Session = Depends(get_db),
                 current_user=Depends(get_current_user)):
     if current_user.role != "employee":
         raise HTTPException(status_code=403, detail="Only employees can create goals")
-    existing = db.query(models.Goal).filter(models.Goal.user_id == current_user.id).all()
+    existing = db.query(models.Goal).filter(
+    models.Goal.user_id == current_user.id,
+    models.Goal.status.in_(["draft", "pending", "returned"])
+).all()
     if len(existing) >= 8:
         raise HTTPException(status_code=400, detail="Maximum 8 goals allowed")
     db_goal = models.Goal(**goal.dict(), user_id=current_user.id, status="draft")
@@ -93,7 +96,10 @@ def submit_goals(db: Session = Depends(get_db), current_user=Depends(get_current
     ).all()
     if not goals:
         raise HTTPException(status_code=400, detail="No draft goals to submit")
-    if len(goals) > 8:
+    if len(goals) > 8 - db.query(models.Goal).filter(
+    models.Goal.user_id == current_user.id,
+    models.Goal.status == "approved"
+).count():
         raise HTTPException(status_code=400, detail="Maximum 8 goals allowed")
     total_weightage = sum(g.weightage for g in goals)
     if abs(total_weightage - 100.0) > 0.01:
