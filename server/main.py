@@ -114,8 +114,13 @@ def delete_goal(goal_id: int, db: Session = Depends(get_db),
     ).first()
     if not goal:
         raise HTTPException(status_code=404, detail="Goal not found")
-    if goal.status != "draft":
-        raise HTTPException(status_code=400, detail="Cannot delete a submitted goal")
+    if goal.status not in ["draft", "returned"]:
+        raise HTTPException(status_code=400, detail="Cannot delete this goal")
+    # Delete related records first
+    db.query(models.QuarterlyUpdate).filter(models.QuarterlyUpdate.goal_id == goal_id).delete()
+    db.query(models.GoalApproval).filter(models.GoalApproval.goal_id == goal_id).delete()
+    db.query(models.CheckinComment).filter(models.CheckinComment.goal_id == goal_id).delete()
+    db.query(models.AuditLog).filter(models.AuditLog.goal_id == goal_id).delete()
     db.delete(goal)
     db.commit()
     return {"message": "Goal deleted"}
