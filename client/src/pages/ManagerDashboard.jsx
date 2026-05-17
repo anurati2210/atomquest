@@ -58,12 +58,12 @@ export default function ManagerDashboard() {
     approved: "#10b981", returned: "#ef4444"
   }[s] || "#6b7280");
   return (
-    <div style={{ minHeight: "100vh", background: "#f3f4f6" }}>
-      <div style={{ background: "white", padding: "1rem 2rem", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-        <span style={{ fontWeight: "600", fontSize: "18px" }}>AtomQuest</span>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #e8f0fe 0%, #f0f4ff 50%, #e8f0fe 100%)" }}>
+      <div style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #2e75b6 100%)", padding: "1rem 2rem", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 4px 12px rgba(30,58,95,0.3)" }}>
+        <span style={{ fontWeight: "700", fontSize: "20px", color: "white", letterSpacing: "0.5px" }}>⚡ AtomQuest</span>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <span style={{ fontSize: "14px", color: "#6b7280" }}>👤 {user.name}</span>
-          <button onClick={logout} style={{ fontSize: "13px", color: "#ef4444", background: "none", border: "none", cursor: "pointer" }}>Logout</button>
+          <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.85)" }}>👤 {user.name}</span>
+          <button onClick={logout} style={{ fontSize: "13px", color: "white", background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: "6px", padding: "5px 12px", cursor: "pointer" }}>Logout</button>
         </div>
       </div>
 
