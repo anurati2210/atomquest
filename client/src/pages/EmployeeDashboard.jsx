@@ -3,7 +3,6 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 
 const API = "https://atomquest-t29k.onrender.com";
-
 const THRUST_AREAS = ["Quality", "Delivery", "Cost", "Safety", "People", "Innovation"];
 const UOM_TYPES = ["min", "max", "timeline", "zero"];
 
@@ -13,13 +12,13 @@ export default function EmployeeDashboard() {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [quarterlyData, setQuarterlyData] = useState({});
-const [showQuarterly, setShowQuarterly] = useState(null);
-const [qForm, setQForm] = useState({ quarter: "Q1", actual_achievement: "", status: "on_track" });
   const [form, setForm] = useState({
     thrust_area: THRUST_AREAS[0], title: "", description: "",
     uom_type: "max", target: "", weightage: ""
   });
+  const [quarterlyData, setQuarterlyData] = useState({});
+  const [showQuarterly, setShowQuarterly] = useState(null);
+  const [qForm, setQForm] = useState({ quarter: "Q1", actual_achievement: "", status: "on_track" });
 
   const headers = { Authorization: `Bearer ${user.access_token}` };
 
@@ -27,15 +26,15 @@ const [qForm, setQForm] = useState({ quarter: "Q1", actual_achievement: "", stat
     const res = await axios.get(`${API}/api/goals`, { headers });
     setGoals(res.data);
   };
+
   const fetchQuarterly = async (goalId) => {
     const res = await axios.get(`${API}/api/goals/${goalId}/quarterly`, { headers });
     setQuarterlyData(prev => ({ ...prev, [goalId]: res.data }));
   };
 
-const handleQuarterlySubmit = async (goalId) => {
+  const handleQuarterlySubmit = async (goalId) => {
     await axios.post(`${API}/api/goals/${goalId}/quarterly`, {
-      ...qForm,
-      actual_achievement: parseFloat(qForm.actual_achievement)
+      ...qForm, actual_achievement: parseFloat(qForm.actual_achievement)
     }, { headers });
     fetchQuarterly(goalId);
     setShowQuarterly(null);
@@ -43,7 +42,7 @@ const handleQuarterlySubmit = async (goalId) => {
     setTimeout(() => setSuccess(""), 3000);
   };
 
-const calcScore = (goal, actual) => {
+  const calcScore = (goal, actual) => {
     if (!actual) return "N/A";
     const t = goal.target;
     if (goal.uom_type === "max") return Math.min((actual / t) * 100, 100).toFixed(1) + "%";
@@ -60,31 +59,24 @@ const calcScore = (goal, actual) => {
 
   const handleAdd = async () => {
     setError("");
-    if (!form.title || !form.target || !form.weightage) {
-      setError("Please fill all fields."); return;
-    }
-    if (parseFloat(form.weightage) < 10) {
-      setError("Minimum weightage is 10%."); return;
-    }
-    if (goals.length >= 8) {
-      setError("Maximum 8 goals allowed."); return;
-    }
+    if (!form.title || !form.target || !form.weightage) { setError("Please fill all fields."); return; }
+    if (parseFloat(form.weightage) < 10) { setError("Minimum weightage is 10%."); return; }
+    if (goals.length >= 8) { setError("Maximum 8 goals allowed."); return; }
     try {
       await axios.post(`${API}/api/goals`, {
-        ...form, target: parseFloat(form.target),
-        weightage: parseFloat(form.weightage)
+        ...form, target: parseFloat(form.target), weightage: parseFloat(form.weightage)
       }, { headers });
       setForm({ thrust_area: THRUST_AREAS[0], title: "", description: "", uom_type: "max", target: "", weightage: "" });
       setShowForm(false);
       fetchGoals();
-    } catch (e) {
-      setError(e.response?.data?.detail || "Error adding goal.");
-    }
+    } catch (e) { setError(e.response?.data?.detail || "Error adding goal."); }
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`${API}/api/goals/${id}`, { headers });
-    fetchGoals();
+    try {
+      await axios.delete(`${API}/api/goals/${id}`, { headers });
+      fetchGoals();
+    } catch (e) { setError(e.response?.data?.detail || "Error deleting goal."); }
   };
 
   const handleSubmit = async () => {
@@ -93,18 +85,13 @@ const calcScore = (goal, actual) => {
       await axios.post(`${API}/api/goals/submit`, {}, { headers });
       setSuccess("Goals submitted for manager approval!");
       fetchGoals();
-    } catch (e) {
-      setError(e.response?.data?.detail || "Error submitting goals.");
-    }
+    } catch (e) { setError(e.response?.data?.detail || "Error submitting goals."); }
   };
 
-  const statusColor = (s) => ({
-    draft: "#f59e0b", pending: "#3b82f6", approved: "#10b981", returned: "#ef4444"
-  }[s] || "#6b7280");
+  const statusColor = (s) => ({ draft: "#f59e0b", pending: "#3b82f6", approved: "#10b981", returned: "#ef4444" }[s] || "#6b7280");
 
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #e8f0fe 0%, #f0f4ff 50%, #e8f0fe 100%)" }}>
-      {/* Navbar */}
       <div style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #2e75b6 100%)", padding: "1rem 2rem", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 4px 12px rgba(30,58,95,0.3)" }}>
         <span style={{ fontWeight: "700", fontSize: "20px", color: "white", letterSpacing: "0.5px" }}>⚡ AtomQuest</span>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
@@ -114,7 +101,6 @@ const calcScore = (goal, actual) => {
       </div>
 
       <div style={{ maxWidth: "900px", margin: "2rem auto", padding: "0 1rem" }}>
-        {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <div>
             <h2 style={{ fontSize: "22px", fontWeight: "700", color: "#1e3a5f" }}>My Goals</h2>
@@ -122,30 +108,19 @@ const calcScore = (goal, actual) => {
           </div>
           <div style={{ display: "flex", gap: "10px" }}>
             {draftGoals.length > 0 && (
-              <button onClick={handleSubmit} disabled={!canSubmit} style={{
-                padding: "9px 18px", background: canSubmit ? "#10b981" : "#d1d5db",
-                color: "white", border: "none", borderRadius: "8px", cursor: canSubmit ? "pointer" : "not-allowed", fontSize: "14px"
-              }}>Submit for Approval</button>
+              <button onClick={handleSubmit} disabled={!canSubmit} style={{ padding: "9px 18px", background: canSubmit ? "#10b981" : "#d1d5db", color: "white", border: "none", borderRadius: "8px", cursor: canSubmit ? "pointer" : "not-allowed", fontSize: "14px" }}>Submit for Approval</button>
             )}
-            {goals.length < 8 && (
-              <button onClick={() => setShowForm(!showForm)} style={{
-                padding: "9px 18px", background: "#2563eb", color: "white",
-                border: "none", borderRadius: "8px", cursor: "pointer", fontSize: "14px"
-              }}>+ Add Goal</button>
-            )}
+            <button onClick={() => setShowForm(!showForm)} style={{ padding: "9px 18px", background: "#2563eb", color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontSize: "14px" }}>+ Add Goal</button>
           </div>
         </div>
 
         {error && <div style={{ background: "#fef2f2", color: "#dc2626", padding: "10px 14px", borderRadius: "8px", marginBottom: "1rem", fontSize: "14px" }}>{error}</div>}
         {success && <div style={{ background: "#f0fdf4", color: "#16a34a", padding: "10px 14px", borderRadius: "8px", marginBottom: "1rem", fontSize: "14px" }}>{success}</div>}
 
-        {/* Add Goal Form */}
         {showForm && (
-  <div style={{
-    background: "white", borderRadius: "14px", padding: "1.25rem 1.5rem", boxShadow: "0 4px 16px rgba(30,58,95,0.08)", border: "1px solid rgba(30,58,95,0.06)"
-  }}>
-    <h3 style={{ marginBottom: "1rem", fontSize: "16px", fontWeight: "600" }}>New Goal</h3>
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+          <div style={{ background: "white", borderRadius: "14px", padding: "1.5rem", marginBottom: "1.5rem", boxShadow: "0 4px 16px rgba(30,58,95,0.08)" }}>
+            <h3 style={{ marginBottom: "1rem", fontSize: "16px", fontWeight: "600" }}>New Goal</h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
               <div>
                 <label style={{ fontSize: "12px", color: "#6b7280" }}>Thrust Area</label>
                 <select value={form.thrust_area} onChange={e => setForm({ ...form, thrust_area: e.target.value })}
@@ -191,7 +166,6 @@ const calcScore = (goal, actual) => {
           </div>
         )}
 
-        {/* Goals List */}
         {goals.length === 0 ? (
           <div style={{ background: "white", borderRadius: "12px", padding: "3rem", textAlign: "center", color: "#9ca3af" }}>
             No goals yet. Click "+ Add Goal" to get started.
@@ -199,84 +173,80 @@ const calcScore = (goal, actual) => {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {goals.map(goal => (
-  <div key={goal.id} style={{
-    background: "white", borderRadius: "14px", padding: "1.25rem 1.5rem",
-    boxShadow: "0 4px 16px rgba(30,58,95,0.08)", border: "1px solid rgba(30,58,95,0.06)",
-    marginBottom: "12px"
-  }}>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <div style={{ flex: 1 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
-          <span style={{ fontWeight: "600", fontSize: "15px" }}>{goal.title}</span>
-          <span style={{ fontSize: "11px", padding: "2px 10px", borderRadius: "20px", background: statusColor(goal.status) + "20", color: statusColor(goal.status), fontWeight: "500" }}>{goal.status}</span>
-        </div>
-        <div style={{ fontSize: "13px", color: "#6b7280" }}>
-          {goal.thrust_area} · Target: {goal.target} · Weightage: {goal.weightage}% · UoM: {goal.uom_type}
-        </div>
-      </div>
-      {(goal.status === "draft" || goal.status === "returned") && (
-        <button onClick={() => handleDelete(goal.id)} style={{ background: "#fef2f2", color: "#dc2626", border: "none", borderRadius: "8px", padding: "6px 14px", cursor: "pointer", fontSize: "13px" }}>Delete</button>
-      )}
-    </div>
+              <div key={goal.id} style={{ background: "white", borderRadius: "14px", padding: "1.25rem 1.5rem", boxShadow: "0 4px 16px rgba(30,58,95,0.08)", border: "1px solid rgba(30,58,95,0.06)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+                      <span style={{ fontWeight: "600", fontSize: "15px" }}>{goal.title}</span>
+                      <span style={{ fontSize: "11px", padding: "2px 10px", borderRadius: "20px", background: statusColor(goal.status) + "20", color: statusColor(goal.status), fontWeight: "500" }}>{goal.status}</span>
+                    </div>
+                    <div style={{ fontSize: "13px", color: "#6b7280" }}>
+                      {goal.thrust_area} · Target: {goal.target} · Weightage: {goal.weightage}% · UoM: {goal.uom_type}
+                    </div>
+                  </div>
+                  {(goal.status === "draft" || goal.status === "returned") && (
+                    <button onClick={() => handleDelete(goal.id)} style={{ background: "#fef2f2", color: "#dc2626", border: "none", borderRadius: "8px", padding: "6px 14px", cursor: "pointer", fontSize: "13px" }}>Delete</button>
+                  )}
+                </div>
 
-    {goal.status === "approved" && (
-      <div style={{ marginTop: "1rem", borderTop: "1px solid #f3f4f6", paddingTop: "1rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-          <span style={{ fontSize: "13px", fontWeight: "500", color: "#374151" }}>Quarterly Progress</span>
-          <button onClick={() => { setShowQuarterly(goal.id); fetchQuarterly(goal.id); }}
-            style={{ fontSize: "12px", padding: "4px 12px", background: "#eff6ff", color: "#2563eb", border: "none", borderRadius: "6px", cursor: "pointer" }}>
-            + Log Progress
-          </button>
-        </div>
-
-        {(quarterlyData[goal.id] || []).map(q => (
-          <div key={q.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6b7280", padding: "4px 0" }}>
-            <span>{q.quarter}</span>
-            <span>Actual: {q.actual_achievement}</span>
-            <span>Score: {calcScore(goal, q.actual_achievement)}</span>
-            <span style={{ color: q.status === "completed" ? "#10b981" : q.status === "on_track" ? "#3b82f6" : "#6b7280" }}>{q.status}</span>
-          </div>
-        ))}
-
-        {showQuarterly === goal.id && (
-          <div style={{ marginTop: "10px", background: "#f9fafb", borderRadius: "8px", padding: "12px" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "8px" }}>
-              <div>
-                <label style={{ fontSize: "11px", color: "#6b7280" }}>Quarter</label>
-                <select value={qForm.quarter} onChange={e => setQForm({ ...qForm, quarter: e.target.value })}
-                  style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px" }}>
-                  {["Q1","Q2","Q3","Q4"].map(q => <option key={q}>{q}</option>)}
-                </select>
+                {goal.status === "approved" && (
+                  <div style={{ marginTop: "1rem", borderTop: "1px solid #f3f4f6", paddingTop: "1rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                      <span style={{ fontSize: "13px", fontWeight: "500", color: "#374151" }}>Quarterly Progress</span>
+                      <button onClick={() => { setShowQuarterly(goal.id); fetchQuarterly(goal.id); }}
+                        style={{ fontSize: "12px", padding: "4px 12px", background: "#eff6ff", color: "#2563eb", border: "none", borderRadius: "6px", cursor: "pointer" }}>
+                        + Log Progress
+                      </button>
+                    </div>
+                    {(quarterlyData[goal.id] || []).map(q => (
+                      <div key={q.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6b7280", padding: "4px 0" }}>
+                        <span>{q.quarter}</span>
+                        <span>Actual: {q.actual_achievement}</span>
+                        <span>Score: {calcScore(goal, q.actual_achievement)}</span>
+                        <span style={{ color: q.status === "completed" ? "#10b981" : q.status === "on_track" ? "#3b82f6" : "#6b7280" }}>{q.status}</span>
+                      </div>
+                    ))}
+                    {showQuarterly === goal.id && (
+                      <div style={{ marginTop: "10px", background: "#f9fafb", borderRadius: "8px", padding: "12px" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "8px" }}>
+                          <div>
+                            <label style={{ fontSize: "11px", color: "#6b7280" }}>Quarter</label>
+                            <select value={qForm.quarter} onChange={e => setQForm({ ...qForm, quarter: e.target.value })}
+                              style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px" }}>
+                              {["Q1","Q2","Q3","Q4"].map(q => <option key={q}>{q}</option>)}
+                            </select>
+                          </div>
+                          <div>
+                            <label style={{ fontSize: "11px", color: "#6b7280" }}>Actual Achievement</label>
+                            <input type="number" value={qForm.actual_achievement}
+                              onChange={e => setQForm({ ...qForm, actual_achievement: e.target.value })}
+                              style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px", boxSizing: "border-box" }} />
+                          </div>
+                          <div>
+                            <label style={{ fontSize: "11px", color: "#6b7280" }}>Status</label>
+                            <select value={qForm.status} onChange={e => setQForm({ ...qForm, status: e.target.value })}
+                              style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px" }}>
+                              <option value="not_started">Not Started</option>
+                              <option value="on_track">On Track</option>
+                              <option value="completed">Completed</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                          <button onClick={() => handleQuarterlySubmit(goal.id)}
+                            style={{ padding: "6px 16px", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "13px" }}>Save</button>
+                          <button onClick={() => setShowQuarterly(null)}
+                            style={{ padding: "6px 16px", background: "#f3f4f6", color: "#374151", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "13px" }}>Cancel</button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
-              <div>
-                <label style={{ fontSize: "11px", color: "#6b7280" }}>Actual Achievement</label>
-                <input type="number" value={qForm.actual_achievement}
-                  onChange={e => setQForm({ ...qForm, actual_achievement: e.target.value })}
-                  style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px", boxSizing: "border-box" }} />
-              </div>
-              <div>
-                <label style={{ fontSize: "11px", color: "#6b7280" }}>Status</label>
-                <select value={qForm.status} onChange={e => setQForm({ ...qForm, status: e.target.value })}
-                  style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "13px", marginTop: "2px" }}>
-                  <option value="not_started">Not Started</option>
-                  <option value="on_track">On Track</option>
-                  <option value="completed">Completed</option>
-                </select>
-              </div>
-            </div>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <button onClick={() => handleQuarterlySubmit(goal.id)}
-                style={{ padding: "6px 16px", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "13px" }}>
-                Save
-              </button>
-              <button onClick={() => setShowQuarterly(null)}
-                style={{ padding: "6px 16px", background: "#f3f4f6", color: "#374151", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "13px" }}>
-                Cancel
-              </button>
-            </div>
+            ))}
           </div>
         )}
       </div>
-    )}
-  </div>
-))}
+    </div>
+  );
+}
