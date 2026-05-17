@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 
-const API = "http://127.0.0.1:8000";
+const API = "https://atomquest-t29k.onrender.com";
 
 const THRUST_AREAS = ["Quality", "Delivery", "Cost", "Safety", "People", "Innovation"];
 const UOM_TYPES = ["min", "max", "timeline", "zero"];
